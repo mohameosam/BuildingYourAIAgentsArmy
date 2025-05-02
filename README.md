@@ -33,7 +33,6 @@ Usage
 1. Clone the repository: git clone https://github.com/mohameosam/BuildingYourAIAgentsArmy
 2. Install dependencies (e.g., numpy, torch, pika, prometheus_client for Python files).
 3. Run scripts in respective directories (e.g., python Chapter_08/optimization_techniques.py).
-4. Open HTML files in a browser (e.g., Chapter_08/tetris_game.html).
 
 
 MIT License
