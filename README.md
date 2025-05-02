@@ -23,7 +23,6 @@ Chapter_08/
   optimization_techniques.py: Demonstrates pruning, quantization, and factorization.
   hybrid_optimization.py: Implements a hybrid optimization approach.
   swarm_architecture_monitoring.py: Monitors swarm architecture with Prometheus.
-  tetris_game.html: A simple Tetris game using p5.js.
 Chapter_09/
   deploy_aws_ecs.sh: Deploys agents to AWS ECS.
 Chapter_10/
