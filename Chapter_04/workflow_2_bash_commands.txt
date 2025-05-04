@@ -1,0 +1,2 @@
+# check sqlite db
+sqlite3 temp_crm.db "SELECT * FROM queries"

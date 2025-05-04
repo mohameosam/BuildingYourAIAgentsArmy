@@ -1,0 +1,8 @@
+# run workflow
+curl -X POST http://localhost:5678/webhook/customer-query -H "Content-Type: application/json" -d '{"query":"Where’s my order?"}'
+
+# error test
+curl -X POST http://localhost:5678/webhook/customer-query -H "Content-Type: application/json" -d '{}'
+
+
+

@@ -1,0 +1,14 @@
+# bash commands to setup Botpress
+
+node –version
+
+mkdir my-botpress-agent
+cd my-botpress-agent
+
+npm install -g @botpress/cli
+
+bp init
+
+cd call-center-bot
+npm run start
+

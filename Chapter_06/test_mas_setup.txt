@@ -1,0 +1,9 @@
+# Test MCP
+curl -X POST http://localhost:8000 -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"submit_order","params":{"order_id":"ORD001","product":"Laptop","quantity":1,"customer_id":"CUST001"},"api_key":"SECRET_KEY"}'
+
+# Test Invalid Request
+curl -X POST http://localhost:8000 -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":2,"method":"submit_order","params":{"order_id":"ORD001"},"api_key":"SECRET_KEY"}'
+
+# Test Unauthorized
+curl -X POST http://localhost:8000 -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":3,"method":"submit_order","params":{"order_id":"ORD002","product":"Phone","quantity":2}}'
+
