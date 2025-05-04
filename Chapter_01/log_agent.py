@@ -27,7 +27,7 @@ class LogMonitorAgent:
     def run(self):
         print("Agent starting...")
         while True:
-            data = self.sees()
+            data = self.see()
             choice = self.think(data)
             self.act(choice)
             time.sleep(1)  # Wait 1 second
