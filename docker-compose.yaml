@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  botpress:
+    image: botpress/server
+    container_name: botpress
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./botpress_data:/botpress/data
+    restart: unless-stopped
