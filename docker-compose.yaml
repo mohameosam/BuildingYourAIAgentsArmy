@@ -7,7 +7,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - botpress_data:/botpress/data
+      - ./botpress_data:/botpress/data
     environment:
       - BP_MODULES_ENDPOINT=http://localhost:3000
       - BP_HOST=0.0.0.0
@@ -56,7 +56,17 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: always
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
 volumes:
   botpress_data:
   n8n_data:
   postgres_data:
+  ollama_data:

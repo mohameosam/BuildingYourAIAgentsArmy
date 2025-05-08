@@ -78,7 +78,15 @@ pip install torch --index-url https://download.pytorch.org/whl/cu128
 
 3. Run scripts in respective directories (e.g., python Chapter_08/optimization_techniques.py).
 
+# Installing Ollama Models
 
+```angular2html
+ollama run llama3.2
+```
+
+```angular2html
+ollama pull nomic-embed-text
+```
 MIT License
 
 Copyright (c) 2025 [Mohamed Osam Abouahmed]
