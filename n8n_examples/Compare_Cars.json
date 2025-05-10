@@ -1,0 +1,147 @@
+{
+  "name": "Compare Cars",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.snippet }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a helpAs a car expert. Can you give me comparison between different cars? \nI need this to take a buying decision. I am in the Egyptian market. I need you to do the following: \n- sort by price ascending\n- add weight to power ratio for each car\n- show me the comparison in a table\n- in the table put a green mark against the advantageous part\n- show reliability\n- stick to the Egyptian market and currency\n- show cars dimensions\n- add tire size\n\nI will provide you with 2 or more cars and I need you to do the comparison and show me photoes of each one\n\nthe output should be in html",
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -140,
+        -260
+      ],
+      "id": "1d525fb3-cb63-4903-905a-d04c7a18c79b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -220,
+        -40
+      ],
+      "id": "9a7340f2-2abb-4696-b58c-83901bb2b2a5",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "4iZWOuY4vvqRAWRu",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "hanyelgaml@ideationmax.com",
+        "subject": "=RE: {{ $('Gmail Trigger').item.json.Subject }}",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        -260
+      ],
+      "id": "35413b34-769a-403c-9f4f-628783f444ea",
+      "name": "Gmail",
+      "webhookId": "ae38ad88-afb1-447d-a005-51aba1aeca58",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4hoJx5m0eUhI373T",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -580,
+        -240
+      ],
+      "id": "d1d455f6-42ca-49b3-8bce-0fd7b927c45d",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Q1DVafZzhVPR2Ls2",
+          "name": "Car Compare Gmail"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1ee07cf5-4345-4244-a53c-0bc919bd494c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6ea000b424f5eac58b31a86c8e085d91d0a94fb7aa2fa05f3283b00d29897014"
+  },
+  "id": "ei7Wuy3MM7zIFBqa",
+  "tags": []
+}
