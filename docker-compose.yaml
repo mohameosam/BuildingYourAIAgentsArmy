@@ -56,6 +56,20 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: always
 
+  pgvector:
+    image: pgvector/pgvector:pg16
+    container_name: pgvector
+    ports:
+      - "54320:5432"
+    environment:
+      - POSTGRES_USER=pgvector
+      - POSTGRES_PASSWORD=pgvector
+      - POSTGRES_DB=pgvector
+    volumes:
+      - pgvector:/var/lib/postgresql/data
+    restart: always
+
+
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
@@ -70,3 +84,4 @@ volumes:
   n8n_data:
   postgres_data:
   ollama_data:
+  pgvector:
