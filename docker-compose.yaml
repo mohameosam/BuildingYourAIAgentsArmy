@@ -79,9 +79,24 @@ services:
       - ollama_data:/root/.ollama
     restart: unless-stopped
 
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=crm_database
+      - MYSQL_USER=crm_user
+      - MYSQL_PASSWORD=crm_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./CRM/mysql-init:/docker-entrypoint-initdb.d
+    restart: always
 volumes:
   botpress_data:
   n8n_data:
   postgres_data:
   ollama_data:
   pgvector:
+  mysql_data:
