@@ -93,6 +93,21 @@ services:
       - mysql_data:/var/lib/mysql
       - ./CRM/mysql-init:/docker-entrypoint-initdb.d
     restart: always
+
+  crm_api:
+    build: ./CRM/crm_flask_api
+    container_name: crm_api
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=crm_user
+      - DB_PASSWORD=crm_pass
+      - DB_NAME=crm_database
+    depends_on:
+      - mysql
+    restart: always
+
 volumes:
   botpress_data:
   n8n_data:
