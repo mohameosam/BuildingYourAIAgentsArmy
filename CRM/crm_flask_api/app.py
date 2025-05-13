@@ -14,6 +14,28 @@ def get_connection():
         database=os.getenv("DB_NAME", "crm_database")
     )
 
+@app.route("/customer/phone/<phone>", methods=["GET"])
+def get_customer_by_phone(phone):
+    """
+    Retrieve customer info by phone number.
+    Returns an empty JSON object if no customer is found.
+    """
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM customer WHERE phone = %s", (phone,))
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({}), 200
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+# Existing CRUD endpoints for all tables
 @app.route("/<table>", methods=["GET"])
 def list_records(table):
     try:
