@@ -104,6 +104,8 @@ services:
       - DB_USER=crm_user
       - DB_PASSWORD=crm_pass
       - DB_NAME=crm_database
+    volumes:
+      - ./CRM/crm_flask_api:/app
     depends_on:
       - mysql
     restart: always
