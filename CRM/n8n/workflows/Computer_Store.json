@@ -1,0 +1,286 @@
+{
+  "name": "Computer Store",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -640,
+        0
+      ],
+      "id": "85168e7f-0cab-4fdc-8735-9520a0f7e3f3",
+      "name": "When chat message received",
+      "webhookId": "adb65e40-82a2-4c53-8774-f10f8c17a3a2"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are SalesBot, a friendly assistant for an electronics shop.\nDo NOT hallucinate products—use only the catalog via our database tools.\n\n=== BEHAVIOR ===\n\nGreeting & Lookup\n\nGreet warmly.\n\nAsk: “May I know your phone number, please?”\n\nIf existing customer, greet by first name and confirm their stored details.\n\nRemember all retrieved customer info for later (name, email, address).\n\nNew‑Customer Registration\n\nIf phone not found, collect (one at a time):\n\nPhone number\n\nFull name\n\nEmail address\n\nShipping address\n\nConfirm each as you go.\n\nRegister the user and remember all collected info for later.\n\nShopping Flow\n\nAlways assume quantity = 1 if none is specified—and do not prompt for quantity.\n\nAfter each addition or removal, confirm updated cart contents (show product name [product_id] and quantity)\n\nFinal Confirmation & Output\n\nWhen the customer indicates they’re done (any clear phrase), output only this JSON and then stop:\n\n\n{\n  \"phone\": \"<customer_phone>\",\n  \"products\": [\n    { \"product_id\": <product_id>, \"quantity\": 1 }\n    …\n  ]\n}\nReference products strictly by product_id.\n\nQuantity is always 1 per item, unless explicitly overridden in the same command."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -420,
+        0
+      ],
+      "id": "06a77448-35f1-400e-853a-b601c32a23ba",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        200
+      ],
+      "id": "3f866f75-01a8-4680-a580-9d8ae22cda10",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "4iZWOuY4vvqRAWRu",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -360,
+        220
+      ],
+      "id": "cfd49350-4dfa-43b3-b31f-9a02bfef08be",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Register Customer",
+        "method": "POST",
+        "url": "http://crm_api:5000/customer",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `It should look like Hany Elgaml or  Ali Abbas`, 'string') }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `the phone should be like 999888777`, 'string') }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `use the format of email and make sure the email is valid`, 'string') }}"
+            },
+            {
+              "name": "address",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Make sure the address is following Canadian convention`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        220
+      ],
+      "id": "7dc91a44-1b6b-4cd9-baab-4396fdb1015f",
+      "name": "Register Customer"
+    },
+    {
+      "parameters": {
+        "toolDescription": "This is called when the customer asks for the list pf products",
+        "url": "http://crm_api:5000/product",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        200
+      ],
+      "id": "0a31fc0b-7b9d-4aa9-84b9-dcac43d311f7",
+      "name": "List Products"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool during the conversation when the customer is asked to provide his phone number\nShow the result in the chat",
+        "url": "=http://crm_api:5000/customer/phone/{{$fromAI(\"phone\")}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        120,
+        240
+      ],
+      "id": "b770aa2e-7840-412c-8816-8bd8b7d5bafb",
+      "name": "get_customer_by_phone"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool when the customer has decided and confirmed the products that he wants to purchase",
+        "method": "POST",
+        "url": "http://crm_api:5000/order",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', ``, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -160,
+        220
+      ],
+      "id": "ce576f16-82ce-4b75-9c65-1694d60d3f72",
+      "name": "Make Order"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Send confirmation email with the following format:\n\n\nDear {{Customer Name}},<br>\n<br>\nThank you for your purchase! We appreciate your business and can’t wait for you to receive your new items.<br>\n\n<h2>Order Details</h2>\n\n<table cellspacing=\"0\" cellpadding=\"8\" border=\"1\" style=\"border-collapse: collapse; width:100%;\"> <thead> <tr style=\"background-color: #f2f2f2;\"> <th align=\"left\">Product</th> <th align=\"center\">Product ID</th> <th align=\"center\">Quantity</th> <th align=\"right\">Unit Price</th> <th align=\"right\">Subtotal</th> </tr> </thead> <tbody> <!-- Repeat this row for each item --> <tr> <td>{{Product Name 1}}</td> <td align=\"center\">{{1}}</td> <td align=\"center\">{{2}}</td> <td align=\"right\">${{XX.XX}}</td> <td align=\"right\">${{YY.YY}}</td> </tr> <tr> <td>{{Product Name 2}}</td> <td align=\"center\">{{4}}</td> <td align=\"center\">{{1}}</td> <td align=\"right\">${{AA.AA}}</td> <td align=\"right\">${{AA.AA}}</td> </tr> <!-- End repeat --> </tbody> <tfoot> <tr style=\"font-weight: bold;\"> <td colspan=\"4\" align=\"right\">Total</td> <td align=\"right\">${{ZZ.ZZ}}</td> </tr> </tfoot> </table>\n\n<h2>Shipping Address</h2>\n{{Full Name}} <br>\n{{Address}} <br>\n<br>\n<h2>Order Summary & Next Steps</h2>\n<br>\nOrder Number: {{order_id}}<br>\n<br>\nOrder Date: ${{order_date}}<br>\n<br>\nTotal: ${{total}}<br>\n<br>\nYour items will ship within 2–3 business days. Once your order has shipped, we will send you a follow‑up email with tracking information. If you have any questions or need to make changes, please reply to this email or contact our support team at support@example.com.<br>\n<br>\nThank you again for shopping with us! We hope you enjoy your purchase.<br>\n<br>\nWarm regards,<br>\n<br>\nThe SalesBot Team<br>\nElectronics Shop Inc.<br>\nsupport@example.com<br>\n1-800-555-1234<br>",
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "Your Order Confirmation",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        220
+      ],
+      "id": "2ba7daee-9212-48e1-9f15-99d7e7885bbf",
+      "name": "Gmail",
+      "webhookId": "d9fe6068-2696-4b13-bf4f-552a34379718",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4hoJx5m0eUhI373T",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Register Customer": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Products": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_customer_by_phone": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make Order": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c6b80da4-8be7-472c-ab10-035fae264183",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6ea000b424f5eac58b31a86c8e085d91d0a94fb7aa2fa05f3283b00d29897014"
+  },
+  "id": "t13UsoPsVRvO8V7F",
+  "tags": []
+}

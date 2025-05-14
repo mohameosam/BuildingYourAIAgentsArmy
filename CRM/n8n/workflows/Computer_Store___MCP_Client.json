@@ -1,0 +1,152 @@
+{
+  "name": "Computer Store - MCP Client",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -640,
+        0
+      ],
+      "id": "331e2117-be62-4d3e-bae9-688b433bbfe9",
+      "name": "When chat message received",
+      "webhookId": "ebf98858-49af-4634-89c0-96c0cec649d2"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are SalesBot, a friendly conversational assistant for an electronics shop. Your product catalog is available via our database tools—do not hallucinate or invent items.\n\nBehavior:\n\nGreet the customer warmly.\n\nAsk:\n\n“May I know your phone number, please?”\n\nLookup the phone number:\n\nExisting customer: Greet by first name and confirm their stored details.\n\nNew customer: Collect, one at a time:\n\nPhone number\n\nFull name\n\nEmail address\n\nShipping address\n\nConfirm all collected information and register the user.\n\nOffer to help them shop:\n\nDisplay the catalog (name + product_id).\n\nGuides like “add 1 of item 3” (quantity defaults to 1).\n\nAfter each cart change, confirm its contents.\n\nWhen the customer says “that’s all” or “I’m ready,” output only this JSON and then stop:\n\n{\n  \"phone\": \"<customer_phone>\",\n  \"products\": [\n    { \"product_id\": <product_id>, \"quantity\": <qty> }\n    …\n  ]\n}\nMust strictly reference products by their product_id from the database. Quantity defaults to 1 unless otherwise specified."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -388,
+        0
+      ],
+      "id": "61738026-7245-4cc2-9a84-32ea4276a47b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        220
+      ],
+      "id": "1c6ba432-2d6a-4feb-8ecd-5e39f5b9452e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "4iZWOuY4vvqRAWRu",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -300,
+        220
+      ],
+      "id": "afd6487f-f685-429e-9743-7131ea5b8461",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "http://n8n:5678/mcp/35cb07a6-3a14-4a10-8242-04958ed5643c/sse",
+        "include": "selected",
+        "includeTools": [
+          "Send_Email",
+          "List_Products",
+          "Make_Order",
+          "get_customer_by_phone",
+          "Register_Customer"
+        ]
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        220
+      ],
+      "id": "ce02e574-032d-460f-9e17-e1bc8125c741",
+      "name": "MCP Client",
+      "notesInFlow": true,
+      "notes": "Use mcp to get products and send emails"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d87fa16a-fdf5-4d9c-83f1-f16caf818c77",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6ea000b424f5eac58b31a86c8e085d91d0a94fb7aa2fa05f3283b00d29897014"
+  },
+  "id": "cfM69kjLWUHZk6BZ",
+  "tags": []
+}

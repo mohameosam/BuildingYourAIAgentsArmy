@@ -1,0 +1,202 @@
+{
+  "name": "Computer Store - MCP Server",
+  "nodes": [
+    {
+      "parameters": {
+        "toolDescription": "Register Customer",
+        "method": "POST",
+        "url": "http://crm_api:5000/customer",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `It should look like Hany Elgaml or  Ali Abbas`, 'string') }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `the phone should be like 999888777`, 'string') }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `use the format of email and make sure the email is valid`, 'string') }}"
+            },
+            {
+              "name": "address",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Make sure the address is following Canadian convention`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -840,
+        -60
+      ],
+      "id": "680eb95f-fe76-4994-a18f-885f18940083",
+      "name": "Register Customer"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool during the conversation when the customer is asked to provide his phone number\nShow the result in the chat",
+        "url": "=http://crm_api:5000/customer/phone/{{$fromAI(\"phone\")}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -640,
+        -40
+      ],
+      "id": "c45d49d3-17f7-405e-ab71-df402b21d902",
+      "name": "get_customer_by_phone"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool when the customer has decided and confirmed the products that he wants to purchase",
+        "method": "POST",
+        "url": "http://crm_api:5000/order",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', ``, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -440,
+        -40
+      ],
+      "id": "e845cfd6-e88f-45a5-87df-1fa8614c9212",
+      "name": "Make Order"
+    },
+    {
+      "parameters": {
+        "path": "35cb07a6-3a14-4a10-8242-04958ed5643c"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        -260
+      ],
+      "id": "ec99860f-fc9d-4b01-a65d-5b1b5f78c860",
+      "name": "MCP Server Trigger",
+      "webhookId": "35cb07a6-3a14-4a10-8242-04958ed5643c",
+      "notesInFlow": true,
+      "notes": "Tools to use "
+    },
+    {
+      "parameters": {
+        "url": "http://crm_api:5000/product",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -220,
+        -40
+      ],
+      "id": "6281c90f-6733-477a-b8a6-f6f9e9dff652",
+      "name": "List Products"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Send confirmation email with the following format:\n\n\nDear {{Customer Name}},<br>\n<br>\nThank you for your purchase! We appreciate your business and can’t wait for you to receive your new items.<br>\n\n<h2>Order Details</h2>\n\n<table cellspacing=\"0\" cellpadding=\"8\" border=\"1\" style=\"border-collapse: collapse; width:100%;\"> <thead> <tr style=\"background-color: #f2f2f2;\"> <th align=\"left\">Product</th> <th align=\"center\">Product ID</th> <th align=\"center\">Quantity</th> <th align=\"right\">Unit Price</th> <th align=\"right\">Subtotal</th> </tr> </thead> <tbody> <!-- Repeat this row for each item --> <tr> <td>{{Product Name 1}}</td> <td align=\"center\">{{1}}</td> <td align=\"center\">{{2}}</td> <td align=\"right\">${{XX.XX}}</td> <td align=\"right\">${{YY.YY}}</td> </tr> <tr> <td>{{Product Name 2}}</td> <td align=\"center\">{{4}}</td> <td align=\"center\">{{1}}</td> <td align=\"right\">${{AA.AA}}</td> <td align=\"right\">${{AA.AA}}</td> </tr> <!-- End repeat --> </tbody> <tfoot> <tr style=\"font-weight: bold;\"> <td colspan=\"4\" align=\"right\">Total</td> <td align=\"right\">${{ZZ.ZZ}}</td> </tr> </tfoot> </table>\n\n<h2>Shipping Address</h2>\n{{Full Name}} <br>\n{{Address}} <br>\n<br>\n<h2>Order Summary & Next Steps</h2>\n<br>\nOrder Number: {{order_id}}<br>\n<br>\nOrder Date: ${{order_date}}<br>\n<br>\nTotal: ${{total}}<br>\n<br>\nYour items will ship within 2–3 business days. Once your order has shipped, we will send you a follow‑up email with tracking information. If you have any questions or need to make changes, please reply to this email or contact our support team at support@example.com.<br>\n<br>\nThank you again for shopping with us! We hope you enjoy your purchase.<br>\n<br>\nWarm regards,<br>\n<br>\nThe SalesBot Team<br>\nElectronics Shop Inc.<br>\nsupport@example.com<br>\n1-800-555-1234<br>",
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "Your Order Confirmation",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        40,
+        -80
+      ],
+      "id": "2ffac30f-b53c-495c-b819-69a2f30b7f04",
+      "name": "Send Email",
+      "webhookId": "1f1f7589-cff2-46fc-a1da-49dbdd498504",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4hoJx5m0eUhI373T",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Register Customer": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_customer_by_phone": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make Order": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Products": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "903d00c5-c86d-4fc1-833f-66e7bf83f579",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6ea000b424f5eac58b31a86c8e085d91d0a94fb7aa2fa05f3283b00d29897014"
+  },
+  "id": "CfbWtPrdCfVhqkOp",
+  "tags": []
+}
