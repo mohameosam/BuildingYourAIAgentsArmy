@@ -31,62 +31,10 @@ Chapter_10/
 # Usage
 
 1. Clone the repository: git clone https://github.com/mohameosam/BuildingYourAIAgentsArmy
-2. Install dependencies 
-```angular2html
-pip install -r requirements.txt
-```
-**Use of CPU**
-```angular2html
-pip install torch --index-url https://download.pytorch.org/whl/cpu  # CPU
-```
-**Use GPU**
-
-Check CUDA
-```angular2html
-nvidia-smi
-```
-You will get something like this
-```angular2html
-+-----------------------------------------------------------------------------------------+
-| NVIDIA-SMI 572.61                 Driver Version: 572.61         CUDA Version: 12.8     |
-|-----------------------------------------+------------------------+----------------------+
-| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |
-| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
-|                                         |                        |               MIG M. |
-|=========================================+========================+======================|
-|   0  NVIDIA GeForce RTX 3060 ...  WDDM  |   00000000:01:00.0  On |                  N/A |
-| N/A   40C    P8             18W /   95W |    1418MiB /   6144MiB |      0%      Default |
-|                                         |                        |                  N/A |
-+-----------------------------------------+------------------------+----------------------+
-
-+-----------------------------------------------------------------------------------------+
-| Processes:                                                                              |
-|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
-|        ID   ID                                                               Usage      |
-|=========================================================================================|
-
-```
-If you don't get this, you may need to install CUDA
-Go to this website and install CUDA
-```angular2html
-https://developer.nvidia.com/cuda-downloads
-```
-```angular2html
-# For NVIDIA GPU (CUDA 12.8):
-pip install torch --index-url https://download.pytorch.org/whl/cu128
-```
-
+2. Install dependencies (e.g., numpy, torch, pika, prometheus_client for Python files).
 3. Run scripts in respective directories (e.g., python Chapter_08/optimization_techniques.py).
 
-# Installing Ollama Models
 
-```angular2html
-ollama run llama3.2
-```
-
-```angular2html
-ollama pull nomic-embed-text
-```
 MIT License
 
 Copyright (c) 2025 [Mohamed Osam Abouahmed]
